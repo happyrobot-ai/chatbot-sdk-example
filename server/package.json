@@ -6,7 +6,7 @@
     "dev": "tsx --env-file=.env --watch src/index.ts"
   },
   "dependencies": {
-    "@happyrobot-ai/sdk": "^0.1.5",
+    "@happyrobot-ai/sdk": "^0.1.7",
     "cors": "^2.8.5",
     "express": "^4.21.0"
   },
