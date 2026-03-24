@@ -109,7 +109,7 @@ app.post("/api/chat/token", async (_req, res) => {
 The browser-side code follows this flow:
 
 ```ts
-import { HappyRobotChatClient } from "@happyrobot-ai/sdk";
+import { HappyRobotChatClient } from "@happyrobot-ai/sdk/chat";
 
 // 1. Get a client token from your server
 const { token } = await fetch("/api/chat-token", { method: "POST" }).then(r => r.json());

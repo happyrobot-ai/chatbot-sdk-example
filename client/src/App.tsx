@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { HappyRobotChatClient } from "@happyrobot-ai/sdk";
-import type { ChatConnection } from "@happyrobot-ai/sdk";
+import { HappyRobotChatClient } from "@happyrobot-ai/sdk/chat";
+import type { ChatConnection } from "@happyrobot-ai/sdk/chat";
 
 interface Attachment {
   file: File;
