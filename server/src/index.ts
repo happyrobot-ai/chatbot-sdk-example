@@ -32,6 +32,9 @@ app.post("/api/chat/token", async (_req, res) => {
   try {
     const { token, expires_at } = await client.chat.createToken({
       workflow_id: WORKFLOW_ID,
+      // Optional. Token lifetime in seconds.
+      // Default 3600 (1 hour), min 60, max 86400 (24 hours).
+      // ttl_seconds: 1800,
     });
     res.json({ token, expires_at });
   } catch (err) {

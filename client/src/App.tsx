@@ -38,16 +38,21 @@ export function App() {
 
   useEffect(scrollToBottom, [messages, streamingContent, scrollToBottom]);
 
+  const fetchToken = useCallback(async (): Promise<string> => {
+    const res = await fetch(`${SERVER_URL}/api/chat/token`, {
+      method: "POST",
+    });
+    if (!res.ok) throw new Error("Failed to get chat token");
+    const { token } = await res.json();
+    return token;
+  }, []);
+
   const connect = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const res = await fetch(`${SERVER_URL}/api/chat/token`, {
-        method: "POST",
-      });
-      if (!res.ok) throw new Error("Failed to get chat token");
-      const { token } = await res.json();
+      const token = await fetchToken();
 
       const chatClient = new HappyRobotChatClient({ token });
       chatClientRef.current = chatClient;
@@ -77,6 +82,15 @@ export function App() {
           setIsConnected(false);
           console.log("Session closed:", event.reason);
         },
+        // Auto-refresh the JWT before it expires. The SDK fires this ~30s
+        // before exp, fetches a fresh token, and sends it over the WS —
+        // the connection stays open.
+        getToken: fetchToken,
+        onTokenRefreshed: (expiresAt) => {
+          console.log("Token refreshed; new expiry:", expiresAt);
+        },
+        // Backstop: only fires if `getToken` is missing or the refresh
+        // failed (e.g. network outage) before the original token expired.
         onTokenExpired: () => {
           setIsConnected(false);
           setError("Session expired — please reconnect");
@@ -95,7 +109,7 @@ export function App() {
       setError(err instanceof Error ? err.message : "Connection failed");
       setIsLoading(false);
     }
-  }, []);
+  }, [fetchToken]);
 
   const endSession = useCallback(async () => {
     if (!connectionRef.current) return;
